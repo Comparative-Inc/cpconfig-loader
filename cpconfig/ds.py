@@ -12,7 +12,6 @@ class MaterializeIncrementalType(Enum):
     REDSHIFT = auto()
 
 
-# Duplicated from cpalgo
 class ColumnType(Enum):
     CONTINUOUS = auto()
     CATEGORICAL = auto()
@@ -80,7 +79,6 @@ class Source:
         return self.table if self.table else "{{ ref('" + self.name + "') }}"
 
 
-# Duplicated from cpalgo
 @dataclass(frozen=True)
 class MetricDisplayConfig:
     unit: str
