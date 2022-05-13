@@ -6,7 +6,10 @@ from typing import Dict, List, Optional, Set, Union
 import sqlglot
 from sqlglot import expressions
 
-from cpconfig.materialize_incremental_type import MaterializeIncrementalType
+
+class MaterializeIncrementalType(Enum):
+    BIGQUERY = auto()
+    REDSHIFT = auto()
 
 
 # Duplicated from cpalgo
