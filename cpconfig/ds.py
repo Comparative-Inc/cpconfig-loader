@@ -168,6 +168,22 @@ class Breakdown:
     exclude_ways: Set[str] = field(default_factory=set)
 
 
+@dataclass
+class Report:
+    name: str
+
+    # In days
+    period_length: int
+    period_offset: int
+    title: str
+    tags: List[str]
+
+    exclude_metrics: List[str] = field(default_factory=set)
+
+    grow_orphan_at_max_depth: int = 0
+    grow_segment_at_max_depth: int = 2  # Breakdown always has 1 more level
+
+
 @dataclass(frozen=True)
 class CpConfig:
     profile: Profile
@@ -176,6 +192,7 @@ class CpConfig:
     where: Optional[str]
     metrics: List[Metric] = field(default_factory=list)
     breakdowns: List[Breakdown] = field(default_factory=list)
+    reports: List[Report] = field(default_factory=list)
 
     @cached_property
     def source_map(self) -> Dict[str, Source]:
