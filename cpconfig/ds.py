@@ -157,6 +157,10 @@ class Dimension:
     def has_aggregate_func(self) -> bool:
         return sqlglot.parse_one(self.select).find(sqlglot.expressions.AggFunc) is not None
 
+    @cached_property
+    def required_column_names(self) -> List[str]:
+        return [colexp.this.this for colexp in sqlglot.parse_one(self.select).find_all(expressions.Column)]
+
 
 @dataclass(frozen=True)
 class Breakdown:
