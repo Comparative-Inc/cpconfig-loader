@@ -3,11 +3,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
-[packages]
-sqlglot = "*"
-"marshmallow-dataclass[union, enum]" = "*"
-pyyaml = "*"
-
 [dev-packages]
 isort = "*"
 pytest = "*"
@@ -15,6 +10,7 @@ flake8 = "*"
 mypy = "*"
 black = "*"
 types-PyYAML = "*"
+cpconfig-py = {editable = true, path = "."}
 
 [requires]
 python_version = "3.8"
