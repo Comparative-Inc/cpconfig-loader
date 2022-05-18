@@ -101,6 +101,7 @@ class Metric:
     per_row_column_type: ColumnType
     breakdown: Optional[str]
     display: MetricDisplayConfig
+    root_predicate: Optional[str] = None
     is_target: bool = True
 
     @cached_property
@@ -159,7 +160,10 @@ class Dimension:
 
     @cached_property
     def required_column_names(self) -> List[str]:
-        return [colexp.this.this for colexp in sqlglot.parse_one(self.select).find_all(expressions.Column)]
+        return [
+            colexp.this.this
+            for colexp in sqlglot.parse_one(self.select).find_all(expressions.Column)
+        ]
 
 
 @dataclass(frozen=True)
