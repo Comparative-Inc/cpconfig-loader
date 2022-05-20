@@ -44,7 +44,9 @@ class Source:
         if (self.table and self.create_view) or not (self.table or self.create_view):
             raise ValueError("A source must have either table or create_view field")
         if not self.join_using_columns:
-            raise ValueError("A source must have either cp_user_id, cp_date, or join_using")
+            raise ValueError(
+                "A source must have either cp_user_id, cp_date, or join_using"
+            )
 
     def __str__(self) -> str:
         return self.name
@@ -143,6 +145,7 @@ class Dimension:
     default: Optional[str]
     where: Optional[str]
     segmentation: Optional[Segmentation]
+    parents: Optional[Set[str]]
 
     def __hash__(self) -> int:
         return hash(self.name)
@@ -156,7 +159,9 @@ class Dimension:
 
     @cached_property
     def has_aggregate_func(self) -> bool:
-        return sqlglot.parse_one(self.select).find(sqlglot.expressions.AggFunc) is not None
+        return (
+            sqlglot.parse_one(self.select).find(sqlglot.expressions.AggFunc) is not None
+        )
 
     @cached_property
     def required_column_names(self) -> List[str]:
