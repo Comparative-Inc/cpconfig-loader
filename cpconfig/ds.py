@@ -103,7 +103,7 @@ class Metric:
     display: MetricDisplayConfig
     root_predicate: Optional[str] = None
     is_target: bool = True
-    forced_columns: Optional[List[str]] = None
+    forced_dimensions: Optional[List[str]] = None
 
     @cached_property
     def required_column_names(self) -> Set[str]:
