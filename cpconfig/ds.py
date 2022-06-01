@@ -145,7 +145,7 @@ class Dimension:
     default: Optional[str]
     where: Optional[str]
     segmentation: Optional[Segmentation]
-    parents: Optional[Set[str]]
+    parent: Optional[str]
 
     def __hash__(self) -> int:
         return hash(self.name)
