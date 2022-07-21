@@ -56,9 +56,10 @@ class Source:
 
     @cached_property
     def group_by_columns(self) -> List[str]:
-        return self.group_by or (
-            ["cp_user_id", "cp_date"] if self.cp_user_id and self.cp_date else []
-        )
+        if self.group_by is not None:
+            return self.group_by
+        return ["cp_user_id", "cp_date"] if self.cp_user_id and self.cp_date else []
+
 
     @cached_property
     def join_using_columns(self) -> List[str]:
