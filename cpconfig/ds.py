@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from functools import cached_property
-from typing import Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 import sqlglot
 from sqlglot import expressions
@@ -29,6 +29,14 @@ class Profile:
 
 
 @dataclass(frozen=True)
+class SyncFrom:
+    tap_name: str
+    tap_url: Optional[str]
+    credential_key: str
+    config: Optional[Dict[str, Any]]
+
+
+@dataclass(frozen=True)
 class Source:
     name: str
     table: Optional[str]
@@ -39,14 +47,16 @@ class Source:
     where_incremental: Optional[str]
     join_using: Optional[List[str]]
     group_by: Optional[List[str]]
+    sync_from: Optional[SyncFrom]
 
     def __post_init__(self) -> None:
-        if (self.table and self.create_view) or not (self.table or self.create_view):
-            raise ValueError("A source must have either table or create_view field")
-        if not self.join_using_columns:
+        mode = list(filter(None, [self.table, self.create_view, self.sync_from]))
+        if len(mode) != 1:
             raise ValueError(
-                "A source must have either cp_user_id, cp_date, or join_using"
+                "A source must have exactly either 'table' or 'create_view' or 'sync_from' field"
             )
+        if not self.join_using_columns:
+            raise ValueError("A source must have either cp_user_id, cp_date, or join_using")
 
     def __str__(self) -> str:
         return self.name
@@ -59,7 +69,6 @@ class Source:
         if self.group_by is not None:
             return self.group_by
         return ["cp_user_id", "cp_date"] if self.cp_user_id and self.cp_date else []
-
 
     @cached_property
     def join_using_columns(self) -> List[str]:
@@ -161,9 +170,7 @@ class Dimension:
 
     @cached_property
     def has_aggregate_func(self) -> bool:
-        return (
-            sqlglot.parse_one(self.select).find(sqlglot.expressions.AggFunc) is not None
-        )
+        return sqlglot.parse_one(self.select).find(sqlglot.expressions.AggFunc) is not None
 
     @cached_property
     def required_column_names(self) -> List[str]:
