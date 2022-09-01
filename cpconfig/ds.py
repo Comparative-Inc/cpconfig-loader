@@ -88,7 +88,12 @@ class Source:
 
     @property
     def dbt_ref(self) -> str:
-        return self.table if self.table else "{{ ref('" + self.name + "') }}"
+        if self.table:
+            return self.table
+        elif self.sync_from:
+            return "{{ target.schema }}." + self.name
+
+        return "{{ ref('" + self.name + "') }}"
 
 
 @dataclass(frozen=True)
