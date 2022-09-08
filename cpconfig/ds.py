@@ -224,7 +224,7 @@ class Report:
 
     exclude_metrics: List[str] = field(default_factory=set)
 
-    num_compare_to_average_periods = 1  # How many previous periods to take average from for metrics with compare_to.type == 'AVERAGE_METRICS'
+    num_compare_to_average_periods: int = 1  # How many previous periods to take average from for metrics with compare_to.type == 'AVERAGE_METRICS'
 
     grow_orphan_at_max_depth: int = 0
     grow_segment_at_max_depth: int = 2  # Breakdown always has 1 more level
