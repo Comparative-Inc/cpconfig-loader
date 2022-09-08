@@ -18,6 +18,12 @@ class ColumnType(Enum):
     BOOLEAN = auto()
 
 
+class MetricCompareToType(Enum):
+    SINGLE_PERIOD = auto()
+    AVERAGE_PERIODS = auto()
+    TARGET_VALUE = auto()
+
+
 class ContinuousValueFormatter(Enum):
     DAYS = auto()
     MINUTES = auto()
@@ -109,6 +115,18 @@ class MetricDisplayConfig:
 
 
 @dataclass(frozen=True)
+class MetricCompareTo:
+    type: MetricCompareToType = MetricCompareToType.SINGLE_PERIOD
+    target_value: Optional[float] = None
+
+    def __post_init__(self) -> None:
+        if self.type == MetricCompareToType.TARGET_VALUE and not self.target_value:
+            raise ValueError("Must specify target_value when type is TARGET_VALUE")
+        if self.type != MetricCompareToType.TARGET_VALUE and self.target_value:
+            raise ValueError("Can only specify target_value when type is TARGET_VALUE")
+
+
+@dataclass(frozen=True)
 class Metric:
     name: str
     per_row_select: str
@@ -121,6 +139,7 @@ class Metric:
     root_predicate: Optional[str] = None
     is_target: bool = True
     forced_dimensions: List[str] = field(default_factory=list)
+    compare_to: MetricCompareTo = field(default_factory=lambda: MetricCompareTo())
 
     @cached_property
     def required_column_names(self) -> Set[str]:
@@ -205,8 +224,16 @@ class Report:
 
     exclude_metrics: List[str] = field(default_factory=set)
 
+    num_compare_to_average_periods = 1  # How many previous periods to take average from for metrics with compare_to.type == 'AVERAGE_METRICS'
+
     grow_orphan_at_max_depth: int = 0
     grow_segment_at_max_depth: int = 2  # Breakdown always has 1 more level
+
+
+@dataclass
+class DataPointHumanize:
+    singular: str = "user"
+    plural: str = "users"
 
 
 @dataclass(frozen=True)
@@ -218,6 +245,7 @@ class CpConfig:
     metrics: List[Metric] = field(default_factory=list)
     breakdowns: List[Breakdown] = field(default_factory=list)
     reports: List[Report] = field(default_factory=list)
+    data_point_humanize: DataPointHumanize = field(default_factory=lambda: DataPointHumanize())
 
     @cached_property
     def source_map(self) -> Dict[str, Source]:
