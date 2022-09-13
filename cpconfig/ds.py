@@ -11,11 +11,17 @@ class MaterializeIncrementalType(Enum):
     BIGQUERY = auto()
     REDSHIFT = auto()
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class ColumnType(Enum):
     CONTINUOUS = auto()
     CATEGORICAL = auto()
     BOOLEAN = auto()
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class MetricCompareToType(Enum):
@@ -23,10 +29,16 @@ class MetricCompareToType(Enum):
     AVERAGE_PERIODS = auto()
     TARGET_VALUE = auto()
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class ContinuousValueFormatter(Enum):
     DAYS = auto()
     MINUTES = auto()
+
+    def __str__(self) -> str:
+        return self.name
 
 
 @dataclass(frozen=True)
